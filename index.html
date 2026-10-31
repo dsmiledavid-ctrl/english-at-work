@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="English at Work">
+<meta name="theme-color" content="#27457a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>English at Work</title>
+<style>
+:root{--ink:#24303f;--soft:#5d6878;--paper:#fbf7ef;--card:#ffffff;--line:#e4dccd;--blue:#27457a;--blue2:#3f63a8;--ok:#2c7a57;--tint:#eef2f9}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--paper)}
+body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,"Segoe UI",sans-serif;font-size:18px;line-height:1.6;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.top{display:flex;align-items:center;gap:8px;max-width:600px;margin:0 auto;padding:10px 16px;font-size:15px;color:var(--soft)}
+.top .mid{flex:1;text-align:center;font-weight:600;min-width:0}
+.top button{min-width:44px;min-height:44px;color:var(--blue);font-weight:600}
+.top .lang{border:1.5px solid var(--line);border-radius:999px;background:var(--card);padding:0 12px;min-height:36px}
+main{max-width:600px;margin:0 auto;padding:6px 16px 40px}
+h1{font-size:27px;line-height:1.25;margin:10px 0 6px;font-weight:700}
+h2{font-size:22px;line-height:1.3;margin:6px 0 12px;font-weight:700}
+.small{font-size:15px;color:var(--soft)}
+.go{display:block;width:100%;min-height:56px;margin:18px 0 0;border-radius:14px;background:var(--blue);color:#fff;font-weight:700;font-size:19px;padding:12px 16px}
+.go:active{background:var(--blue2)}
+.go.plain{background:var(--card);color:var(--blue);border:1.5px solid var(--line);font-weight:600;font-size:17px;min-height:50px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+.plan{list-style:none;margin:10px 0;padding:0}
+.plan li{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line)}
+.plan li:last-child{border-bottom:0}
+.plan .n{color:var(--blue);font-weight:700;width:1.3em;flex:none}
+.plan .t{flex:1}
+.plan .m{color:var(--soft);font-size:15px;white-space:nowrap}
+.why{background:var(--tint);border-radius:12px;padding:10px 14px;margin:12px 0;font-size:16px}
+.week button{display:flex;width:100%;align-items:center;justify-content:space-between;min-height:52px;padding:8px 2px;border-bottom:1px solid var(--line);text-align:left}
+.week .done{color:var(--ok);font-weight:700;font-size:15px}
+.sent{display:grid;grid-template-columns:2em 1fr;gap:2px 6px;padding:7px 0;border-bottom:1px solid var(--line)}
+.sent b{color:var(--blue)}
+.sent .en{font-weight:600}
+.sent .ja{grid-column:2;font-size:15px;color:var(--soft)}
+audio{display:block;width:100%;margin:16px 0}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.nums button{min-height:54px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);font-weight:700;font-size:20px}
+.cue{font-size:20px;font-weight:600;margin:6px 0 14px}
+.built{min-height:64px;border:1.5px dashed var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:19px;font-weight:600;background:var(--card)}
+.built .fix{color:var(--soft);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{min-height:46px;padding:6px 14px;border-radius:999px;background:var(--tint);border:1.5px solid #cfd9ea;font-weight:600}
+.chip.in{background:var(--blue);color:#fff;border-color:var(--blue)}
+.answer{font-size:21px;font-weight:700;margin:12px 0 4px}
+.ok{color:var(--ok);font-weight:700}
+textarea{display:block;width:100%;min-height:96px;margin:12px 0;padding:12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:var(--card);color:var(--ink)}
+.frame{font-size:21px;font-weight:700}
+.eg{color:var(--soft);font-size:16px}
+.big{font-size:23px;font-weight:700;line-height:1.4;margin:16px 0}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.row .w{font-weight:700;font-size:20px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+const D = {"week":"2026-11-02","yours_jp":"仕事で「これを英語で言いたかった」と思ったら、LINEで日本語で送ってください。1文で十分です。名前と数字は入れないでください。","yours_en":"At work, if you think \"I wanted to say this in English\", send it to me on LINE in Japanese. One sentence is enough. Please leave out names and numbers.","sounds":{"s1":"sounds/s1.mp3","s2a":"sounds/s2a.mp3","s2b":"sounds/s2b.mp3","s3":"sounds/s3.mp3","s4":"sounds/s4.mp3"},"days":[{"id":"mon","name_jp":"月曜日","name_en":"Monday","short_jp":"月","short_en":"Mon","why_jp":"丸ごと覚える文は、繰り返しが必要です。今日はその3文を練習します。","why_en":"Sentences you must remember whole need more repeats. Today: three of those.","atwork_jp":"仕事で：今日、すぐに答えられないことを聞かれたら、\"Let me check and get back to you.\" を使ってみてください。","atwork_en":"At work: today, when someone asks you something you can't answer yet, try \"Let me check and get back to you.\"","steps":[{"title_jp":"11文を見ないで言う","title_en":"Say the 11 from memory","min":3,"explain_jp":"音声1を再生します。日本語のあと、英語が流れる前に英語で言ってください。画面は見なくて大丈夫です。最後まで言えた文を数えてください。","explain_en":"Play Sound 1. After each Japanese sentence, say it in English before the English comes. No need to look at the screen. Count the sentences you finished.","do":[{"kind":"sound","sound":"s1","label_jp":"音声1（2分23秒）","label_en":"Sound 1 (2:23)"},{"kind":"count","of":11}]},{"title_jp":"3文を並べ替える","title_en":"Put three sentences in order","min":2,"explain_jp":"語をタップして、文を作ります。できたら答えが出ます。声に出して言ってください。","explain_en":"Tap the words to build the sentence. The answer then appears. Say it aloud.","do":[{"kind":"order","items":[{"jp":"確認して、また連絡します。","words":["get back","let me","to you","and","check"],"before":"","after":".","answer":"Let me check and get back to you."},{"jp":"確認ですが、金曜日までにサンプル10個ですね？","words":["confirm","just","to"],"before":"","after":": ten samples by Friday?","answer":"Just to confirm: ten samples by Friday?"},{"jp":"ありがとうございます。とても助かります。","words":["helpful","that's","very"],"before":"Thank you.","after":".","answer":"Thank you. That's very helpful."}]}]},{"title_jp":"同僚に答える","title_en":"Answer a colleague","min":4,"explain_jp":"同僚が話します。ポーズで、合う文を言ってください。数字や曜日は聞こえたものに変えます。そのあと良い答えが流れます。2回やります。1回目は文を見ながら、2回目は見ないで。","explain_en":"A colleague speaks. In the pause, say the sentence that fits. Change the numbers and days to what you heard. Then you hear a good answer. You do it twice: first looking at the sentences, then without them.","do":[{"kind":"sound","sound":"s3","label_jp":"音声3 · 1回目","label_en":"Sound 3 · first time","note_jp":"文を見ながら","note_en":"Looking at the sentences","show":[6,7,8]},{"kind":"sound","sound":"s3","label_jp":"音声3 · 2回目","label_en":"Sound 3 · second time","note_jp":"見ないで","note_en":"Without looking"}]},{"title_jp":"3文を見ないで言う","title_en":"Say the three from memory","min":1,"explain_jp":"日本語を見て、英語で言います。そのあと、タップして確認してください。","explain_en":"Look at the Japanese and say it in English. Then tap to check.","do":[{"kind":"reveal","cards":[{"jp":"確認して、また連絡します。","en":"Let me check and get back to you."},{"jp":"確認ですが、金曜日までにサンプル10個ですね？","en":"Just to confirm: ten samples by Friday?"},{"jp":"ありがとうございます。とても助かります。","en":"Thank you. That's very helpful."}]}]}]},{"id":"tue","name_jp":"火曜日","name_en":"Tuesday","short_jp":"火","short_en":"Tue","why_jp":"知らない単語が出てきても、この1文があれば会話についていけます。","why_en":"When a word you don't know comes up, this one sentence keeps you in the conversation.","atwork_jp":"仕事で：今日、知らない単語が聞こえたら、\"Sorry, what does ___ mean?\" を使ってみてください。","atwork_en":"At work: today, when you hear a word you don't know, try \"Sorry, what does ___ mean?\"","steps":[{"title_jp":"11文を見ないで言う","title_en":"Say the 11 from memory","min":3,"explain_jp":"音声1を再生します。日本語のあと、英語が流れる前に英語で言ってください。画面は見なくて大丈夫です。最後まで言えた文を数えてください。","explain_en":"Play Sound 1. After each Japanese sentence, say it in English before the English comes. No need to look at the screen. Count the sentences you finished.","do":[{"kind":"sound","sound":"s1","label_jp":"音声1（2分23秒）","label_en":"Sound 1 (2:23)"},{"kind":"count","of":11}]},{"title_jp":"4つの新しい単語を読む","title_en":"Read the four new words","min":2,"explain_jp":"レッスンで出てきた4つの単語です。例文と一緒に、声に出して読んでください。","explain_en":"The four words from our lesson. Read each one aloud, with its sentence.","do":[{"kind":"words","rows":[{"word":"postponed","jp":"延期された","en":"The meeting is postponed to Thursday.","en_jp":"会議は木曜日に延期されました。"},{"word":"struggling","jp":"苦戦している","en":"We're struggling with the new material.","en_jp":"新しい材料に苦戦しています。"},{"word":"bring forward","jp":"前倒しする","en":"We need to bring the trial forward.","en_jp":"トライアルを前倒しする必要があります。"},{"word":"expectations","jp":"期待・要望","en":"What are the customer's expectations?","en_jp":"お客様の要望は何ですか？"}]}]},{"title_jp":"意味を聞く","title_en":"Ask what it means","min":3.5,"explain_jp":"同僚が文を言います。ポーズで、新しい単語の意味を聞いてください。\"Sorry, what does ___ mean?\" そのあと、質問と意味が流れます。2回やります。1回目は見ながら、2回目は見ないで。","explain_en":"A colleague says a sentence. In the pause, ask about the new word: \"Sorry, what does ___ mean?\" Then you hear the question and the meaning. You do it twice: first looking, then without looking.","do":[{"kind":"sound","sound":"s4","label_jp":"音声4 · 1回目","label_en":"Sound 4 · first time","note_jp":"見ながら：postponed · struggling · bring forward · expectations","note_en":"Looking: postponed · struggling · bring forward · expectations","show":[12]},{"kind":"sound","sound":"s4","label_jp":"音声4 · 2回目","label_en":"Sound 4 · second time","note_jp":"見ないで","note_en":"Without looking"}]},{"title_jp":"もう一度聞く","title_en":"Ask once more","min":1.5,"explain_jp":"単語を見て、\"Sorry, what does ___ mean?\" で聞きます。そのあと、タップして確認してください。","explain_en":"Look at the word and ask with \"Sorry, what does ___ mean?\" Then tap to check.","do":[{"kind":"reveal","cards":[{"jp":"postponed の意味を聞く","en":"Sorry, what does postponed mean?"},{"jp":"struggling の意味を聞く","en":"Sorry, what does struggling mean?"},{"jp":"bring forward の意味を聞く","en":"Sorry, what does bring forward mean?"},{"jp":"expectations の意味を聞く","en":"Sorry, what does expectations mean?"}]}]}]},{"id":"wed","name_jp":"水曜日","name_en":"Wednesday","short_jp":"水","short_en":"Wed","why_jp":"仕事でいちばん難しいのは、知らない単語が出てきて、話が分からなくなる瞬間です。今日はその瞬間の練習です。","why_en":"The hardest moment at work: a word you don't know comes up, and you lose the thread. Today you practise that moment.","atwork_jp":"仕事で：今日、単語や数字が聞き取れなかったら、この4文のどれかを使ってみてください。","atwork_en":"At work: today, when you miss a word or a number, try one of these four sentences.","steps":[{"title_jp":"11文を見ないで言う","title_en":"Say the 11 from memory","min":3,"explain_jp":"音声1を再生します。日本語のあと、英語が流れる前に英語で言ってください。画面は見なくて大丈夫です。最後まで言えた文を数えてください。","explain_en":"Play Sound 1. After each Japanese sentence, say it in English before the English comes. No need to look at the screen. Count the sentences you finished.","do":[{"kind":"sound","sound":"s1","label_jp":"音声1（2分23秒）","label_en":"Sound 1 (2:23)"},{"kind":"count","of":11}]},{"title_jp":"同僚に答える","title_en":"Answer a colleague","min":2.5,"explain_jp":"同僚が話します。ポーズで、合う文を言ってください。数字や曜日は聞こえたものに変えます。答えは1つとは限りません。間に合わなければ、答えのあとに言うか、一時停止してください。","explain_en":"A colleague speaks. In the pause, say the sentence that fits. Change the numbers and days to what you heard. More than one can be right. Too slow? Say it after the answer, or pause the sound.","do":[{"kind":"sound","sound":"s2a","label_jp":"音声2 · パート1","label_en":"Sound 2 · part 1","note_jp":"文を見ながら","note_en":"Looking at the sentences","show":[7,9,11,12]}]},{"title_jp":"数字を聞き取る","title_en":"Catch the numbers","min":2.5,"explain_jp":"数字や日付の入った短い文が6つ流れます。ノートに数字だけを書いてください（\"the fifth\" → 5）。すぐあとに答えが流れます。seventeen と seventy は似ています。単語の終わりをよく聞いてください。","explain_en":"You hear six short sentences, each with a number or a date. Write only the number in your notebook (\"the fifth\" → 5). The answer comes right after. Seventeen and seventy sound close: listen to the end of the word.","do":[{"kind":"sound","sound":"s2b","label_jp":"音声2 · パート2","label_en":"Sound 2 · part 2","note_jp":"ノートに数字を書く","note_en":"Write the numbers in your notebook"}]},{"title_jp":"4文を見ないで言う","title_en":"Say the four from memory","min":1.5,"explain_jp":"日本語を見て、英語で言います。そのあと、タップして確認してください。","explain_en":"Look at the Japanese and say it in English. Then tap to check.","do":[{"kind":"reveal","cards":[{"jp":"確認ですが、金曜日までにサンプル10個ですね？","en":"Just to confirm: ten samples by Friday?"},{"jp":"すみません、もう一度言っていただけますか？","en":"Sorry, could you say that again?"},{"jp":"書いていただけますか？忘れてしまうので。","en":"Could you write it down, please? I will forget."},{"jp":"すみません、＿＿はどういう意味ですか？","en":"Sorry, what does ___ mean?"}]}]}]},{"id":"thu","name_jp":"木曜日","name_en":"Thursday","short_jp":"木","short_en":"Thu","why_jp":"仕事では、ご自身のサンプル、日付、同僚が入った文が必要です。今日は、本当に使える文を4つ作ります。土曜日に1つ聞かせてください。","why_en":"At work you need these sentences with your own things in them. Today you build four you can really use. On Saturday, I would like to hear one.","atwork_jp":"仕事で：作った4文のどれかを、実際に使ってみてください。","atwork_en":"At work: use one of your four sentences, for real.","steps":[{"title_jp":"11文を見ないで言う","title_en":"Say the 11 from memory","min":3,"explain_jp":"音声1を再生します。日本語のあと、英語が流れる前に英語で言ってください。画面は見なくて大丈夫です。最後まで言えた文を数えてください。","explain_en":"Play Sound 1. After each Japanese sentence, say it in English before the English comes. No need to look at the screen. Count the sentences you finished.","do":[{"kind":"sound","sound":"s1","label_jp":"音声1（2分23秒）","label_en":"Sound 1 (2:23)"},{"kind":"count","of":11}]},{"title_jp":"自分の文を4つ作る","title_en":"Build four of your own","min":5.5,"explain_jp":"来週のご自身の仕事について、本当の文を書きます。型が1つずつ出ます。ご自身の言葉でも大丈夫です。土曜日に一緒に見ます。","explain_en":"Write real sentences about your own work next week. The frames come one at a time. Your own words are fine too. We'll look at them together on Saturday.","do":[{"kind":"frames","frames":[{"key":"thu1","frame":"Can you send me ___ by ___?","jp":"〜までに〜を送ってもらえますか？","eg":"Can you send me the test results by Wednesday?","help_jp":"例：the report · the data · the drawing · the schedule","help_en":"e.g. the report · the data · the drawing · the schedule"},{"key":"thu2","frame":"Just to confirm: ___ by ___?","jp":"確認ですが、〜までに〜ですね？","eg":"Just to confirm: seven sets by Monday?","help_jp":"例：seven sets · ten samples · the report","help_en":"e.g. seven sets · ten samples · the report"},{"key":"thu3","frame":"We're going to have ___ on ___.","jp":"〜曜日に〜があります。","eg":"We're going to have a meeting on Tuesday.","help_jp":"going to のあとには動詞が必要です。ここでは have です。","help_en":"going to needs a verb after it. Here: have."},{"key":"thu4","frame":"We're going to ___ on ___.","jp":"〜曜日に〜する予定です。","eg":"We're going to check the samples on Wednesday.","help_jp":"trial は名詞なので、start the trial / have a trial と言います。","help_en":"trial is a noun here, so: start the trial / have a trial."}]}]},{"title_jp":"自分の文を言う","title_en":"Say yours aloud","min":1.5,"explain_jp":"作った4文が1つずつ出ます。それぞれ2回、声に出して言ってください。","explain_en":"Your four sentences come one at a time. Say each one aloud, twice.","do":[{"kind":"yours","keys":["thu1","thu2","thu3","thu4"]}]}]},{"id":"fri","name_jp":"金曜日","name_en":"Friday","short_jp":"金","short_en":"Fri","why_jp":"今週の最後は、仕事で書くような本当のメッセージです。","why_en":"The week ends with a real message, the kind you write at work.","atwork_jp":"仕事で：今日のメッセージの1文を、実際に使ってみてください。","atwork_en":"At work: use one sentence of today's message, for real.","finish_jp":"土曜日は1〜11番の文から始めます。今週の量と難しさ（多すぎる・少なすぎる・簡単すぎる・難しすぎる）も教えてください。","finish_en":"On Saturday we start with sentences 1–11. Please also tell me: was this week too much, too little, too easy or too hard?","steps":[{"title_jp":"11文を見ないで言う","title_en":"Say the 11 from memory","min":3,"explain_jp":"音声1を再生します。日本語のあと、英語が流れる前に英語で言ってください。画面は見なくて大丈夫です。最後まで言えた文を数えてください。","explain_en":"Play Sound 1. After each Japanese sentence, say it in English before the English comes. No need to look at the screen. Count the sentences you finished.","do":[{"kind":"sound","sound":"s1","label_jp":"音声1（2分23秒）","label_en":"Sound 1 (2:23)"},{"kind":"count","of":11}]},{"title_jp":"メッセージを書く","title_en":"Write a message","min":5,"explain_jp":"ご自身の実際の仕事について、同僚に送れるようなメッセージを3〜4文で書きます。これは練習用です。","explain_en":"Write a message you could send to a colleague about your real work, in 3–4 sentences. It is for practice.","do":[{"kind":"write","key":"fri","prompt_jp":"入れること：ある日までに何かが必要 · 今日はできないことがあるが明日ならできる · 数字を1つ確認する。\"Hi …,\" で始めて \"Thanks,\" で終わります。","prompt_en":"Put in: you need something by a day · you can't do one thing today, but you can tomorrow · you check one number. Start with \"Hi …,\" and end with \"Thanks,\"."}]},{"title_jp":"私に送る（任意）","title_en":"Send it to me (optional)","min":2,"explain_jp":"書いたメッセージを読み上げて、LINEの音声メッセージで私に送ってください（30秒くらい）。間違えても大丈夫です。どう聞こえるかを聞きたいだけです。レッスンの前に聞きます。","explain_en":"Read your message aloud and send it to me as a LINE voice message, about 30 seconds. Mistakes are fine: I want to hear how it sounds. I will listen before our lesson.","do":[{"kind":"show","key":"fri"}]}]}],"sentences":[{"n":1,"en":"Could you check this drawing, please?","jp":"この図面を確認していただけますか？"},{"n":2,"en":"Can you send me the data by Friday?","jp":"金曜日までにデータを送ってもらえますか？"},{"n":3,"en":"I need ten samples before the trial.","jp":"トライアルの前にサンプルが10個必要です。"},{"n":4,"en":"Sure, no problem.","jp":"もちろんです。問題ありません。"},{"n":5,"en":"Sorry, I can't do it today. I can do it tomorrow.","jp":"すみません、今日はできません。明日ならできます。"},{"n":6,"en":"Let me check and get back to you.","jp":"確認して、また連絡します。"},{"n":7,"en":"Just to confirm: ten samples by Friday?","jp":"確認ですが、金曜日までにサンプル10個ですね？"},{"n":8,"en":"Thank you. That's very helpful.","jp":"ありがとうございます。とても助かります。"},{"n":9,"en":"Sorry, could you say that again?","jp":"すみません、もう一度言っていただけますか？"},{"n":10,"en":"We're going to start the trial on Monday.","jp":"月曜日にトライアルを始める予定です。"},{"n":11,"en":"Could you write it down, please? I will forget.","jp":"書いていただけますか？忘れてしまうので。"},{"n":12,"en":"Sorry, what does ___ mean?","jp":"すみません、＿＿はどういう意味ですか？"}]};
+const KEY = "english-at-work-" + D.week;
+let mem = {};
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return mem; } }
+const S = Object.assign({ lang: "ja", counts: {}, done: {}, text: {}, busy: {} }, load());
+function save() { mem = S; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private window: this visit only */ } }
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const tr = (o, f) => (S.lang === "en" ? o[f + "_en"] : o[f + "_jp"]) || o[f] || "";
+const say = (ja, en) => S.lang === "en" ? en : ja;
+const nums = "①②③④⑤⑥";
+const app = document.getElementById("app");
+const dayOf = id => D.days.find(d => d.id === id);
+const sentence = n => D.sentences.find(s => s.n === n);
+const minutes = m => say("約" + m + "分", "about " + m + " min");
+
+/* one day = a flat list of screens; each step opens with its own instruction, then the screen clears for the exercise */
+function screens(day) {
+  const out = [];
+  const steps = S.busy[day.id] ? day.steps.slice(0, 1) : day.steps;
+  steps.forEach((st, i) => {
+    out.push({ kind: "explain", st, i });
+    st.do.forEach(sc => {
+      if (sc.kind === "order") sc.items.forEach((it, k) => out.push({ kind: "order", it, k, of: sc.items.length, st, i }));
+      else if (sc.kind === "reveal") sc.cards.forEach((c, k) => out.push({ kind: "reveal", c, k, of: sc.cards.length, st, i }));
+      else if (sc.kind === "frames") sc.frames.forEach((f, k) => out.push({ kind: "frame", f, k, of: sc.frames.length, st, i }));
+      else if (sc.kind === "yours") sc.keys.forEach((key, k) => out.push({ kind: "yours", key, k, of: sc.keys.length, sc, st, i }));
+      else out.push(Object.assign({ st, i }, sc));
+    });
+  });
+  out.push({ kind: "finish" });
+  return out;
+}
+
+function topBar(day, i, list) {
+  const here = list ? list[i] : null;
+  const mid = day ? tr(day, "name") + (here && here.st ? " · " + nums[here.i] + " / " + (S.busy[day.id] ? 1 : day.steps.length) : "") : "";
+  return `<div class="top"><button id="back">${say("‹ 戻る", "‹ Back")}</button><div class="mid">${esc(mid)}</div>` +
+    `<button class="lang" id="lang">${S.lang === "en" ? "日本語" : "English"}</button></div>`;
+}
+function wire(day, i) {
+  document.getElementById("lang").onclick = () => { S.lang = S.lang === "en" ? "ja" : "en"; save(); route(); };
+  const b = document.getElementById("back");
+  b.onclick = () => { location.hash = !day ? "home" : i > 0 ? `go/${day.id}/${i - 1}` : i === 0 ? `plan/${day.id}` : "home"; };
+  if (!day && !location.hash.startsWith("#list")) b.style.visibility = "hidden";
+}
+function page(day, i, list, body) {
+  stopWake();
+  app.innerHTML = topBar(day, i, list) + `<main>${body}</main>`;
+  wire(day, i);
+  window.scrollTo(0, 0);
+}
+const next = (day, i) => { location.hash = `go/${day.id}/${i + 1}`; };
+
+/* the phone must not go dark during a sound he answers without touching the screen */
+let wake = null;
+function stopWake() { if (wake) { wake.release().catch(() => {}); wake = null; } }
+function keepAwake(a) {
+  a.addEventListener("play", () => { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(w => { wake = w; }).catch(() => {}); });
+  a.addEventListener("pause", stopWake);
+}
+
+function todayDay() {
+  const idx = new Date().getDay() - 1;                     // Monday = 0 … Friday = 4; Saturday and Sunday: the next day not done
+  if (idx >= 0 && idx < D.days.length && !S.done[D.days[idx].id]) return { day: D.days[idx], today: true };
+  const open = D.days.find(d => !S.done[d.id]);
+  return { day: open, today: false };
+}
+
+function home() {
+  const t = todayDay();
+  let head;
+  if (!t.day) head = `<div class="card"><b>${say("今週の練習は全部終わりました。", "This week's practice is all done.")}</b></div>`;
+  else head = `<div class="card"><div class="small">${t.today ? say("今日の練習", "Today's practice") : say("次の練習", "Next practice")}</div>` +
+    `<h1>${esc(tr(t.day, "name"))}</h1><div class="small">${minutes(10)}</div>` +
+    `<button class="go" data-to="plan/${t.day.id}">${say("開く", "Open")}</button></div>`;
+  const rows = D.days.map(d => `<button data-to="plan/${d.id}"><span>${esc(tr(d, "name"))}</span>` +
+    `<span class="done">${S.done[d.id] ? say("完了", "done") : ""}</span></button>`).join("");
+  const line = /\bLine\//i.test(navigator.userAgent) ?
+    `<p class="small">${say("うまく動かないときは、Safari や Chrome で開いてください。", "If something doesn't work, open this page in Safari or Chrome.")}</p>` : "";
+  page(null, 0, null, `<h1>English at Work</h1>${head}<div class="week">${rows}</div>` +
+    `<button class="go plain" data-to="list">${say("12文を見る", "See the 12 sentences")}</button>${line}`);
+}
+
+function plan(day) {
+  const lines = day.steps.map((s, i) => `<li><span class="n">${nums[i]}</span><span class="t">${esc(tr(s, "title"))}</span>` +
+    `<span class="m">${minutes(s.min)}</span></li>`).join("");
+  page(day, -1, null, `<h1>${say("今日の練習", "Today")}</h1><ul class="plan">${lines}</ul><div class="why">${esc(tr(day, "why"))}</div>` +
+    `<button class="go" id="start">${say("始める", "Start")}</button>` +
+    `<button class="go plain" id="busy">${say("忙しい日：①だけ", "Busy day: step ① only")}</button>`);
+  document.getElementById("start").onclick = () => { S.busy[day.id] = false; save(); location.hash = `go/${day.id}/0`; };
+  document.getElementById("busy").onclick = () => { S.busy[day.id] = true; save(); location.hash = `go/${day.id}/0`; };
+}
+
+function sentList(ns) {
+  return ns.map(n => { const s = sentence(n); return `<div class="sent"><b>${s.n}</b><span class="en">${esc(s.en)}</span><span class="ja">${esc(s.jp)}</span></div>`; }).join("");
+}
+
+const render = {
+  explain(day, i, list, c) {
+    page(day, i, list, `<h2>${nums[c.i]} ${esc(tr(c.st, "title"))}</h2><p>${esc(tr(c.st, "explain"))}</p>` +
+      `<button class="go" id="n">${say("やってみる", "Begin")}</button>`);
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  sound(day, i, list, c) {
+    const shown = c.show ? sentList(c.show) : "";
+    page(day, i, list, `<h2>${esc(tr(c, "label"))}</h2>${c.note_jp ? `<p class="small">${esc(tr(c, "note"))}</p>` : ""}` +
+      `<audio controls preload="metadata" src="${esc(D.sounds[c.sound])}"></audio>${shown}` +
+      `<button class="go" id="n">${say("次へ", "Next")}</button>`);
+    keepAwake(app.querySelector("audio"));
+    document.getElementById("n").onclick = () => { app.querySelector("audio").pause(); next(day, i); };
+  },
+  count(day, i, list, c) {
+    const seen = D.days.filter(d => S.counts[d.id] != null).map(d => `${esc(tr(d, "short"))} ${S.counts[d.id]}`).join(" · ");
+    let btns = "";
+    for (let n = 0; n <= c.of; n++) btns += `<button data-n="${n}">${n}</button>`;
+    page(day, i, list, `<h2>${say(`${c.of}文のうち、いくつ言えましたか？`, `How many of the ${c.of} did you finish?`)}</h2><div class="nums">${btns}</div>` +
+      (seen ? `<p class="small">${esc(seen)}</p>` : ""));
+    app.querySelectorAll("[data-n]").forEach(b => { b.onclick = () => { S.counts[day.id] = +b.dataset.n; save(); next(day, i); }; });
+  },
+  order(day, i, list, c) {
+    const it = c.it, used = [];
+    const norm = s => s.toLowerCase().replace(/[^a-z0-9']/g, "");
+    const draw = () => {
+      const left = it.words.map((w, k) => used.includes(k) ? "" : `<button class="chip" data-k="${k}">${esc(w)}</button>`).join("");
+      const line = used.map(k => `<button class="chip in" data-u="${k}">${esc(it.words[k])}</button>`).join(" ");
+      const complete = used.length === it.words.length;
+      const built = [it.before, used.map(k => it.words[k]).join(" "), it.after].join(" ");
+      const right = complete && norm(built) === norm(it.answer);
+      page(day, i, list, `<p class="small">${c.k + 1} / ${c.of}</p><div class="cue">${esc(it.jp)}</div>` +
+        `<div class="built"><span class="fix">${esc(it.before)}</span> ${line} <span class="fix">${esc(it.after)}</span></div><div class="chips">${left}</div>` +
+        (complete ? `<div class="answer">${esc(it.answer)}</div><p class="${right ? "ok" : "small"}">${right ? say("合っています。", "That's right.") : say("これが答えです。", "This is the answer.")} ` +
+          `<span class="small">${say("声に出して言ってください。", "Say it aloud.")}</span></p><button class="go" id="n">${say("次へ", "Next")}</button>` : ""));
+      app.querySelectorAll("[data-k]").forEach(b => { b.onclick = () => { used.push(+b.dataset.k); draw(); }; });
+      app.querySelectorAll("[data-u]").forEach(b => { b.onclick = () => { used.splice(used.indexOf(+b.dataset.u), 1); draw(); }; });
+      const n = document.getElementById("n"); if (n) n.onclick = () => next(day, i);
+    };
+    draw();
+  },
+  reveal(day, i, list, c) {
+    const draw = open => {
+      page(day, i, list, `<p class="small">${c.k + 1} / ${c.of}</p><div class="cue">${esc(c.c.jp)}</div>` +
+        (open ? `<div class="answer">${esc(c.c.en)}</div><button class="go" id="n">${say("次へ", "Next")}</button>` :
+          `<p class="small">${say("英語で言ってから、確認してください。", "Say it in English, then check.")}</p><button class="go" id="o">${say("英語を見る", "Show the English")}</button>`));
+      const o = document.getElementById("o"); if (o) o.onclick = () => draw(true);
+      const n = document.getElementById("n"); if (n) n.onclick = () => next(day, i);
+    };
+    draw(false);
+  },
+  words(day, i, list, c) {
+    const rows = c.rows.map(r => `<div class="row"><div class="w">${esc(r.word)}</div><div class="small">${esc(r.jp)}</div><div>${esc(r.en)}</div><div class="small">${esc(r.en_jp)}</div></div>`).join("");
+    page(day, i, list, `<h2>${esc(tr(c.st, "title"))}</h2>${rows}<button class="go" id="n">${say("次へ", "Next")}</button>`);
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  frame(day, i, list, c) {
+    const f = c.f;
+    page(day, i, list, `<p class="small">${c.k + 1} / ${c.of}</p><div class="frame">${esc(f.frame)}</div><div class="small">${esc(f.jp)}</div>` +
+      `<p class="eg">e.g. ${esc(f.eg)}</p><textarea id="t" placeholder="${say("ここに書くか、ノートに書いてください", "Write here or in your notebook")}">${esc(S.text[f.key] || "")}</textarea>` +
+      `<p class="small">${esc(tr(f, "help"))}</p><button class="go" id="n">${say("次へ", "Next")}</button>`);
+    const t = document.getElementById("t");
+    t.oninput = () => { S.text[f.key] = t.value; save(); };
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  yours(day, i, list, c) {
+    const v = (S.text[c.key] || "").trim();
+    page(day, i, list, `<p class="small">${c.k + 1} / ${c.of}</p><div class="big">${v ? esc(v) : say("（ノートの文）", "(your sentence in your notebook)")}</div>` +
+      `<p>${say("2回、声に出して言ってください。", "Say it aloud, twice.")}</p><button class="go" id="n">${say("次へ", "Next")}</button>`);
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  write(day, i, list, c) {
+    page(day, i, list, `<h2>${esc(tr(c.st, "title"))}</h2><p class="small">${esc(tr(c, "prompt"))}</p>` +
+      `<textarea id="t" style="min-height:190px" placeholder="Hi …,">${esc(S.text[c.key] || "")}</textarea><button class="go" id="n">${say("次へ", "Next")}</button>`);
+    const t = document.getElementById("t");
+    t.oninput = () => { S.text[c.key] = t.value; save(); };
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  show(day, i, list, c) {
+    const v = (S.text[c.key] || "").trim();
+    page(day, i, list, `<h2>${esc(tr(c.st, "title"))}</h2><div class="big">${v ? esc(v).replace(/\n/g, "<br>") : say("（ノートのメッセージ）", "(your message in your notebook)")}</div>` +
+      `<button class="go" id="n">${say("次へ", "Next")}</button>`);
+    document.getElementById("n").onclick = () => next(day, i);
+  },
+  finish(day, i, list) {
+    if (!S.busy[day.id]) S.done[day.id] = true;
+    save();
+    const seen = D.days.filter(d => S.counts[d.id] != null).map(d => `${esc(tr(d, "short"))} ${S.counts[d.id]}`).join(" · ");
+    page(day, i, list, `<h1>${say("今日の練習は終わりです。", "That's today's practice.")}</h1>` +
+      (seen ? `<p>${say("言えた文の数：", "Sentences you finished: ")}${seen}</p>` : "") +
+      `<div class="why">${esc(tr(day, "atwork"))}</div>` +
+      (day.finish_jp ? `<p>${esc(tr(day, "finish"))}</p>` : "") +
+      `<p class="small">${esc(tr(D, "yours"))}</p><button class="go" data-to="home">${say("閉じる", "Close")}</button>`);
+  },
+};
+
+function list() {
+  page(null, 0, null, `<h2>${say("12文", "The 12 sentences")}</h2>${sentList(D.sentences.map(s => s.n))}<button class="go plain" data-to="home">${say("閉じる", "Close")}</button>`);
+}
+
+function route() {
+  const [a, b, c] = location.hash.replace(/^#/, "").split("/");
+  document.documentElement.lang = S.lang === "en" ? "en" : "ja";
+  const day = dayOf(b);
+  if (a === "plan" && day) return plan(day);
+  if (a === "go" && day) {
+    const seq = screens(day), i = Math.min(Math.max(+c || 0, 0), seq.length - 1), sc = seq[i];
+    return render[sc.kind](day, i, seq, sc);
+  }
+  if (a === "list") return list();
+  home();
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-to]"); if (b) location.hash = b.dataset.to; });
+window.addEventListener("hashchange", route);
+route();
+/* an installed copy must not stick on an old version (from the reader app, D496) */
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  const had = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => {
+    reg.update().catch(() => {});
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") reg.update().catch(() => {}); });
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
