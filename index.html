@@ -112,12 +112,12 @@ function topBar(day, i, list) {
     `<button class="lang" id="lang">${S.lang === "en" ? "日本語" : "English"}</button></div>`;
 }
 function wire(day, i) {
-  document.getElementById("lang").onclick = () => { change(s => { s.lang = s.lang === "en" ? "ja" : "en"; }); route(); };
+  document.getElementById("lang").onclick = () => { resume = clip ? eachAt : null; change(s => { s.lang = s.lang === "en" ? "ja" : "en"; }); route(); };
   const b = document.getElementById("back");
   b.onclick = () => { location.replace("#" + (!day ? "home" : i > 0 ? `go/${day.id}/${i - 1}` : i === 0 ? `plan/${day.id}` : "home")); };
   if (!day && !location.hash.startsWith("#list")) b.style.visibility = "hidden";
 }
-let clip = null;                                            // the one-sentence player; it never outlives its screen
+let clip = null, eachAt = null, resume = null;               // the one-sentence player; it never outlives its screen
 function page(day, i, list, body) {
   stopWake();
   if (clip) { clip.pause(); clip.remove(); clip = null; }
@@ -196,8 +196,12 @@ const render = {
     document.body.appendChild(a);
     clip = a; keepAwake(a);
     const box = document.getElementById("each");
-    let k = 0, state = "ready";
+    let k = resume && resume.day === day.id ? resume.k : 0, state = "ready", timer = 0;   // a language change keeps his place
+    resume = null;
+    const stopped = () => { if (clip === a && state === "playing") { clearTimeout(timer); state = "ended"; draw(); } };
     const draw = () => {
+      if (clip !== a) return;                                // a late event from a screen he has left
+      eachAt = { day: day.id, k };
       const s = sentence(k + 1), head = `<p class="small">${k + 1} / ${c.of}</p>`;
       if (state === "ready") box.innerHTML = head + `<button class="go" id="p">${say("再生", "Play")}</button>`;
       else if (state === "playing") box.innerHTML = head + `<div class="big">${say("英語で言ってください", "Say it in English")}</div>`;
@@ -209,8 +213,10 @@ const render = {
     };
     const play = () => {
       state = "playing"; a.src = D.sounds["say" + (k + 1)];
+      clearTimeout(timer);
+      timer = setTimeout(stopped, 25000);                    // the longest clip is 15 s: a sound that never ends must not strand him
       const p = a.play();
-      if (p) p.catch(() => { state = "ended"; draw(); });
+      if (p) p.catch(stopped);
       draw();
     };
     const mark = ok => {
@@ -219,13 +225,14 @@ const render = {
       change(x => { x.counts[day.id] = Object.values(x.marks[day.id]).filter(Boolean).length; });
       next(day, i);
     };
-    a.addEventListener("ended", () => { state = "ended"; draw(); });
-    a.addEventListener("error", () => { if (state === "playing") { state = "ended"; draw(); } });
+    a.addEventListener("ended", stopped);
+    a.addEventListener("error", stopped);
+    a.addEventListener("pause", () => { if (!a.ended) stopped(); });     // a phone call or another app stops the sound
     draw();
   },
   result(day, i, list, c) {
     const m = S.marks[day.id] || {}, missed = D.sentences.filter(s => m[s.n] === false).map(s => s.n);
-    const n = S.counts[day.id] || 0;
+    const n = D.sentences.filter(s => m[s.n] === true).length;
     const seen = D.days.filter(d => S.counts[d.id] != null).map(d => `${esc(tr(d, "short"))} ${S.counts[d.id]}`).join(" · ");
     page(day, i, list, `<h2>${say(`${c.of}文のうち、${n}文言えました。`, `You said ${n} of the ${c.of}.`)}</h2><p class="small">${esc(seen)}</p>` +
       (missed.length ? `<p>${say("言えなかった文：", "The ones you couldn't say:")}</p>${sentList(missed)}` : "") +
