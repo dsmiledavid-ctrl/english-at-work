@@ -36,7 +36,10 @@ h2{font-size:22px;line-height:1.3;margin:6px 0 12px;font-weight:700}
 .plan .t{flex:1}
 .plan .m{color:var(--soft);font-size:15px;white-space:nowrap}
 .why{background:var(--tint);border-radius:12px;padding:10px 14px;margin:12px 0;font-size:16px}
-.week button{display:flex;width:100%;align-items:center;justify-content:space-between;min-height:52px;padding:8px 2px;border-bottom:1px solid var(--line);text-align:left}
+.week{display:grid;gap:8px;margin:14px 0 4px}
+.week button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:8px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;text-align:left}
+.week button::after{content:"›";color:var(--blue);font-size:26px;line-height:1;margin-left:auto}
+.week button:active{background:var(--tint)}
 .week .done{color:var(--ok);font-weight:700;font-size:15px}
 .sent{display:grid;grid-template-columns:2em 1fr;gap:2px 6px;padding:7px 0;border-bottom:1px solid var(--line)}
 .sent b{color:var(--blue)}
@@ -157,7 +160,9 @@ function home() {
     `<span class="done">${S.done[d.id] ? say("完了", "done") : ""}</span>` + (!S.done[d.id] && S.counts[d.id] != null ? `<span class="small">①</span>` : "") + `</button>`).join("");
   const line = /\bLine\//i.test(navigator.userAgent) ?
     `<p class="small">${say("うまく動かないときは、Safari や Chrome で開いてください。", "If something doesn't work, open this page in Safari or Chrome.")}</p>` : "";
-  page(null, 0, null, `<h1>English at Work</h1>${head}<div class="week">${rows}</div>` +
+  const same = `<p class="small">${say("毎日、最初の①は同じ11の英文です。くり返して、すぐに言えるようにするためです。②からは、日ごとにちがいます。",
+    "Every day, step ① is the same 11 sentences: repeating them makes them quick to say. From step ②, each day is different.")}</p>`;
+  page(null, 0, null, `<h1>English at Work</h1>${head}<div class="week">${rows}</div>${same}` +
     `<button class="go plain" data-to="list">${say("12の英文と自分の文を見る", "See the 12 sentences and yours")}</button>${line}`);
 }
 
